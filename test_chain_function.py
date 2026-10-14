@@ -1,6 +1,5 @@
 from chain_of_functions import hello, make_bold, make_italic, make_underline
 
-# test
 def text():
     return "text"
 
