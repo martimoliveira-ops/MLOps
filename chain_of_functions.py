@@ -1,6 +1,6 @@
 def make_bold(function):
     def wrapped():
-        return "<b>" + function() + "<b>"
+        return "<b>" + function() + "</b>"
 
     return wrapped
 
