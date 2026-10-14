@@ -3,6 +3,7 @@
 install:
 	python -m pip install --upgrade pip
 	python -m pip install -r requirements.txt
+	python -m pip install -r requirements-dev.txt
 
 format:
 	python -m black chain_of_functions.py test_chain_function.py

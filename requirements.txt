@@ -1,4 +1,2 @@
-pytest
-pytest-cov
-pylint
-black
+# Runtime dependencies only. The app uses just the standard library for now.
+# Dev tools (pytest, pylint, black) live in requirements-dev.txt.

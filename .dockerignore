@@ -1,0 +1,14 @@
+.git
+.github
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.coverage
+test-results.xml
+test_*.py
+requirements-dev.txt
+buildspec.yml
+Makefile
+Dockerfile
+.dockerignore
