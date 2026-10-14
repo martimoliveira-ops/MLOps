@@ -4,6 +4,7 @@ def make_bold(function):
 
     return wrapped
 
+
 def make_italic(function):
     def wrapped():
         return "<i>" + function() + "</i>"
