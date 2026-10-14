@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+    commands:
+      - python --version
+      - make install
+  pre_build:
+    commands:
+      - make format-check
+      - make lint
+  build:
+    commands:
+      - make test-ci
+
+reports:
+  pytest-reports:
+    files:
+      - test-results.xml
+    file-format: JUNITXML

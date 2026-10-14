@@ -1,4 +1,4 @@
-.PHONY: install format format-check lint test all
+.PHONY: install format format-check lint test test-ci all
 
 install:
 	python -m pip install --upgrade pip
@@ -15,5 +15,8 @@ lint:
 
 test:
 	python -m pytest -vv --cov=chain_of_functions test_chain_function.py
+
+test-ci:
+	python -m pytest -vv --cov=chain_of_functions --junitxml=test-results.xml test_chain_function.py
 
 all: install format lint test
