@@ -4,7 +4,6 @@ def make_bold(function):
 
     return wrapped
 
-# This is a test
 def make_italic(function):
     def wrapped():
         return "<i>" + function() + "</i>"
