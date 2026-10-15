@@ -1,20 +1,20 @@
 def make_bold(function):
-    def wrapped():
-        return "<b>" + function() + "</b>"
+    def wrapped(*args, **kwargs):
+        return "<b>" + function(*args, **kwargs) + "</b>"
 
     return wrapped
 
 
 def make_italic(function):
-    def wrapped():
-        return "<i>" + function() + "</i>"
+    def wrapped(*args, **kwargs):
+        return "<i>" + function(*args, **kwargs) + "</i>"
 
     return wrapped
 
 
 def make_underline(function):
-    def wrapped():
-        return "<u>" + function() + "</u>"
+    def wrapped(*args, **kwargs):
+        return "<u>" + function(*args, **kwargs) + "</u>"
 
     return wrapped
 
@@ -26,4 +26,12 @@ def hello():
     return "Hello everyone"
 
 
-print(hello())
+@make_bold
+@make_italic
+@make_underline
+def format_text(text):
+    return text
+
+
+if __name__ == "__main__":
+    print(hello())

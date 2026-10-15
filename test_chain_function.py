@@ -1,4 +1,10 @@
-from chain_of_functions import hello, make_bold, make_italic, make_underline
+from chain_of_functions import (
+    format_text,
+    hello,
+    make_bold,
+    make_italic,
+    make_underline,
+)
 
 
 def text():
@@ -19,3 +25,7 @@ def test_make_underline():
 
 def test_hello_applies_decorators_bottom_up():
     assert hello() == "<b><i><u>Hello everyone</u></i></b>"
+
+
+def test_format_text_passes_input_through():
+    assert format_text("hi") == "<b><i><u>hi</u></i></b>"
