@@ -2,3 +2,6 @@
 # Dev tools (pytest, pylint, black) live in requirements-dev.txt.
 fastapi
 uvicorn
+pandas
+numpy
+pyarrow

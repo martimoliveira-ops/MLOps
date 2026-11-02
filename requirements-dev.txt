@@ -3,3 +3,8 @@ pytest-cov
 pylint
 black
 httpx
+jupyter
+matplotlib
+seaborn
+ipykernel
+numpy
