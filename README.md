@@ -1,4 +1,13 @@
-# MLOps
+# MLOps: Portuguese electricity demand forecaster
+
+Forecasts the next 24 hours of electricity demand, hour by hour. It's trained on real Portuguese smart-meter data, retrained automatically, and deployed on AWS through a CI/CD pipeline.
+
+## Docs
+
+- [Product requirements and roadmap](docs/prd/0001-demand-forecaster.md)
+- [Architecture decisions (ADRs)](docs/adr/README.md)
+- [GitHub workflow: issues, branches and PRs](docs/github-workflow.md)
+- [Instructions for AI agents](AGENTS.md)
 
 ## Data
 
