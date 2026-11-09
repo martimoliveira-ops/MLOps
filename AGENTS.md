@@ -6,9 +6,14 @@ Instructions for AI coding agents (Claude Code, Copilot, Codex, Cursor, …) wor
 
 A service that forecasts Portuguese electricity demand for the next 24 hours, hour by hour. It's trained on the UCI ElectricityLoadDiagrams20112014 smart-meter dataset, retrained automatically, and deployed on AWS.
 
-It's a learning and portfolio project that follows the book *Practical MLOps*. Goals, scope and the phased roadmap are in [docs/prd/0001-demand-forecaster.md](docs/prd/0001-demand-forecaster.md).
+It's a learning and portfolio project that follows the book *Practical MLOps*. The plan of record is the step-by-step *Implementation Plan* (2 Nov 2026), summarised in [docs/prd/0001-demand-forecaster.md](docs/prd/0001-demand-forecaster.md). Step numbers such as "1.4" refer to that plan.
 
-**Current phase: 1 (data and exploration).** Work happens in `notebooks/01_exploration.ipynb`. `src/forecaster/` is still a scaffold.
+The dataset ends in 2014, so production runs on a **simulated clock**:
+- Data before a cut-off date (about 30 June 2014) is history, used for training.
+- A replay job publishes one more day of real readings at a time.
+- The API forecasts the next day.
+
+**Current phase: finishing Phase 0 (restructure) while starting Phase 1 (data).** Loading is done in `notebooks/01_exploration.ipynb`. `src/forecaster/` is still a scaffold.
 
 ## How to work in this repo
 
@@ -24,6 +29,8 @@ It's a learning and portfolio project that follows the book *Practical MLOps*. G
 | Language | Python 3.12 ([ADR-0004](docs/adr/0004-python-3-12-baseline.md)) |
 | Packaging | `src/` layout, `pyproject.toml`, editable install ([ADR-0002](docs/adr/0002-src-layout-with-editable-install.md)) |
 | Data | pandas, numpy, pyarrow (parquet) |
+| Data versioning | DVC with an S3 remote at `s3://martim-forecaster-data/dvc` ([ADR-0008](docs/adr/0008-version-data-with-dvc.md)) |
+| Modelling (Phase 2+) | LightGBM, MLflow running locally, Pandera validation, `holidays` (PT); Evidently for drift in Phase 6 |
 | Serving (Phase 4) | FastAPI + uvicorn ([ADR-0003](docs/adr/0003-fastapi-for-serving.md)) |
 | Quality | black, pylint (`--disable=R,C`), pytest + pytest-cov |
 | CI | GitHub Actions (Python 3.12 + 3.13 matrix) and AWS CodeBuild (`buildspec.yml`, `main` only) |
@@ -33,10 +40,10 @@ It's a learning and portfolio project that follows the book *Practical MLOps*. G
 ## Layout
 
 ```
-src/forecaster/     package code (pipeline modules arrive in Phase 3)
-tests/              pytest tests, named test_*.py
-notebooks/          numbered exploration notebooks: NN_topic.ipynb
-data/               gitignored; raw/ is never modified, interim/ holds parquet caches
+src/forecaster/     package code; the target modules are listed in the PRD ("Target repository layout")
+tests/              pytest tests, named test_*.py; tests/fixtures/ holds small hand-made samples
+notebooks/          numbered notebooks: 01_exploration, 02_modeling
+data/               managed by DVC, gitignored; raw/ is never modified, interim/ holds parquet caches
 docs/adr/           architecture decision records
 docs/prd/           product requirements
 .github/            CI workflow, PR and issue templates
@@ -55,6 +62,9 @@ Run everything from the repo root with the venv active. The Makefile is the sour
 | Format check | `make format-check` | `python -m black --check src tests` |
 | Lint | `make lint` | `python -m pylint --recursive=y --disable=R,C src tests` |
 | Test | `make test` | `python -m pytest -vv --cov=forecaster tests` |
+| Get the data | `dvc pull` | same (needs AWS credentials; available after step 1.5) |
+
+`make run` (the API with reload) and `make install-train` (training and notebook dependencies) arrive with steps 0.5 and 0.6. Phase 3 adds `make train` and `dvc repro`.
 
 On Windows:
 - Activate the venv with `.venv\Scripts\Activate.ps1`.
@@ -64,16 +74,21 @@ A change is done only when the format check, lint and tests all pass locally.
 
 ## Dependencies
 
-- `requirements.txt`: what the app and pipeline need **at runtime**. These go into the Docker image.
-- `requirements-dev.txt`: tools for tests, linting and notebooks. Never in the image.
-- List each package in only one of the two files.
+There are three files. Step 0.6 finishes the split; until then, notebook tools live in the dev file.
+- `requirements.txt`: **serving** only (fastapi, uvicorn, pandas, lightgbm, boto3, pyarrow). This is all that goes into the Docker image.
+- `requirements-dev.txt`: checks (pytest, pytest-cov, pylint, black, httpx, locust).
+- `requirements-train.txt`: training and notebooks (jupyter, matplotlib, scikit-learn, mlflow, `dvc[s3]`, pandera, holidays, evidently).
+- List each package in only one file.
 - Ask before adding a dependency.
 
 ## Data rules: read before touching data code
 
 These come from Phase 1 findings. Breaking them produces models that look right but are wrong.
 
-- **Never commit data.** `data/` is gitignored. Raw files live in S3 under `raw/`. The SHA256 of the raw zip is in the README.
+- **Never commit data.** `data/` is gitignored. Data is versioned with DVC: commit the `.dvc` and `dvc.lock` files, then run `dvc push`. The SHA256 of the original UCI zip is in the README, as a record of where the data came from.
+- **The forecast setup.** At midnight of day D, forecast all 24 hours of day D+1. Every feature must be known at midnight of day D, so a lag is always **at least 24 hours** before the hour it predicts.
+- **The period after the cut-off date is reserved for the simulated production period.** By default that's after 30 June 2014; the date is set in `params.yaml`. It's never used for training, tuning or backtesting in Phases 2–3.
+- **Tests never use the full dataset.** Use small hand-made files in `tests/fixtures/`.
 - **The raw file format:** separator `;`, decimal comma (`decimal=","`), first column is the timestamp, one column per client (`MT_001` … `MT_370`).
 - **Units:** values are the average kW over 15 minutes. Divide by 4 to get kWh. Hourly energy is the **sum** of four kWh values.
 - **Timestamps mark the end of each interval.** `00:15` covers 00:00–00:15, and the last row is `2015-01-01 00:00`, which belongs to 2014. Resample with `label="right", closed="right"`.
@@ -84,7 +99,7 @@ These come from Phase 1 findings. Breaking them produces models that look right 
   - A feature for time *t* may only use data that would be known at forecast time.
   - Backtest with expanding or rolling windows.
   - Any new feature function needs a test proving it uses no future data.
-- **Every model must beat both baselines** ("same as yesterday" and "same as last week") on a held-out period, measured with MAE and MAPE.
+- **Every model must beat both seasonal-naive baselines** (daily and weekly) across rolling-origin backtest folds. It must beat them on MAE, MAPE **and euro cost**, with a Diebold-Mariano test supporting the difference.
 
 ## Code conventions
 
@@ -113,3 +128,4 @@ These come from Phase 1 findings. Breaking them produces models that look right 
 - Push to `main`, force-push, or rewrite published history.
 - Edit an accepted ADR. Write a superseding one instead.
 - Use a random train/test split on time-series data.
+- Use data from after the cut-off date for training, tuning or backtesting.

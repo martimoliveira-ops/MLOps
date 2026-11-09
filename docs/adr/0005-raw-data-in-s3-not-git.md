@@ -1,7 +1,7 @@
 # 0005. Store raw data in S3, never in git
 
 - **Date:** 2026-11-06
-- **Status:** Accepted
+- **Status:** Superseded by [ADR-0008](0008-version-data-with-dvc.md)
 
 ## Context
 

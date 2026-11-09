@@ -12,5 +12,5 @@ Forecasts the next 24 hours of electricity demand, hour by hour. It's trained on
 ## Data
 
 - Source: UCI ElectricityLoadDiagrams20112014 (CC BY 4.0), Trindade, A. (2015), https://doi.org/10.24432/C58C86
-- Raw file: `s3://<your-bucket>/raw/uci-electricity/electricityloaddiagrams20112014.zip`
-- SHA256: `F6C4D0E0DF12ECDB9EA008DD6EEF3518ADB52C559D04A9BAC2E1B81DCFC8D4E1`
+- Versioning: DVC, with its remote in the project's S3 bucket ([ADR-0008](docs/adr/0008-version-data-with-dvc.md)). Run `dvc pull` to fetch the data once it's tracked (plan step 1.5).
+- SHA256 of the original UCI download (`electricityloaddiagrams20112014.zip`): `F6C4D0E0DF12ECDB9EA008DD6EEF3518ADB52C559D04A9BAC2E1B81DCFC8D4E1`
