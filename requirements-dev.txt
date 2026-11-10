@@ -1,10 +1,6 @@
+# Checks: tests, coverage, lint and formatting. Installed by `make install` and in CI.
 pytest
 pytest-cov
 pylint
 black
 httpx
-jupyter
-matplotlib
-seaborn
-ipykernel
-numpy

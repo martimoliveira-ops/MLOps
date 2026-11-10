@@ -1,14 +1,25 @@
+# Only requirements.txt, pyproject.toml and src/ belong in the image.
 .git
 .github
 .venv
+.dvc/cache
 __pycache__
 *.pyc
+*.egg-info
 .pytest_cache
 .coverage
 test-results.xml
-test_*.py
+data/
+notebooks/
+tests/
+docs/
+mlruns/
+mlartifacts/
+mlflow.db
+*.parquet
 requirements-dev.txt
-buildspec.yml
+requirements-train.txt
+buildspec*.yml
 Makefile
 Dockerfile
 .dockerignore

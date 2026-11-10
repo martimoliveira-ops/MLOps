@@ -1,0 +1,6 @@
+# Training and notebooks. Installed by `make install-train`; never in the serving image or CI checks.
+jupyter
+ipykernel
+matplotlib
+seaborn
+dvc[s3]

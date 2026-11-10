@@ -224,3 +224,5 @@ __marimo__/
 data/
 mlruns/
 mlartifacts/
+mlflow.db
+*.parquet

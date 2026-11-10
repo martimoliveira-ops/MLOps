@@ -1,5 +1,5 @@
-# Runtime dependencies only: what the container needs to serve the app.
-# Dev tools (pytest, pylint, black) live in requirements-dev.txt.
+# Serving: only what the API container needs at runtime.
+# Checks live in requirements-dev.txt; training and notebooks in requirements-train.txt.
 fastapi
 uvicorn
 pandas

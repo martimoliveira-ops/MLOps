@@ -10,3 +10,13 @@ requires-python = ">=3.12"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+[tool.pylint.main]
+recursive = true
+
+[tool.pylint."messages control"]
+disable = ["R", "C"]
