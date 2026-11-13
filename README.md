@@ -8,7 +8,7 @@ Forecasts the next 24 hours of electricity demand, hour by hour. It's trained on
 
 At midnight of each day, the service forecasts every hour of the next day. The data is from 370 Portuguese clients and ends in 2014, so "production" runs on a simulated clock. Data before a cut-off date trains the model. A daily replay job then publishes one more day of real readings, as if the meters had just reported them. That gives real forecasts to score, real drift to detect and real retraining decisions to make. Each model is judged by its error, and also by what that error costs in euros on the Portuguese day-ahead market.
 
-## Architecture (planned)
+## Architecture
 
 - **Data:** the raw readings are versioned with DVC in S3, and a Pandera validation gate stops the pipeline on bad data.
 - **Training:** a `dvc repro` pipeline builds features, backtests LightGBM against two naive baselines, logs runs to MLflow, and publishes the winning model to S3 with a manifest.
