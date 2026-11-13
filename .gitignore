@@ -217,6 +217,9 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
+# AI tools: personal overrides stay on this machine
+.claude/settings.local.json
+
 # Streamlit
 .streamlit/secrets.toml
 

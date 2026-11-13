@@ -1,0 +1,51 @@
+{
+    "permissions": {
+        "allow": [
+            "Bash(make format)",
+            "Bash(make format-check)",
+            "Bash(make lint)",
+            "Bash(make test)",
+            "Bash(python -m black:*)",
+            "Bash(python -m pylint:*)",
+            "Bash(python -m pytest:*)",
+            "Bash(git status)",
+            "Bash(git diff:*)",
+            "Bash(git log:*)",
+            "Bash(git show:*)",
+            "Bash(git branch:*)",
+            "Bash(dvc status:*)"
+        ],
+        "ask": [
+            "Bash(git commit:*)",
+            "Bash(git push:*)",
+            "Bash(gh pr create:*)",
+            "Bash(gh pr merge:*)",
+            "Bash(make install:*)",
+            "Bash(python -m pip install:*)",
+            "Bash(dvc push:*)",
+            "Bash(dvc repro:*)",
+            "Bash(docker:*)",
+            "Bash(aws:*)",
+            "Edit(buildspec.yml)",
+            "Edit(Dockerfile)",
+            "Edit(pyproject.toml)",
+            "Edit(requirements*.txt)",
+            "Edit(.github/workflows/**)",
+            "Edit(docs/adr/**)",
+            "Write(buildspec.yml)",
+            "Write(Dockerfile)",
+            "Write(pyproject.toml)",
+            "Write(requirements*.txt)",
+            "Write(.github/workflows/**)"
+        ],
+        "deny": [
+            "Read(./.env)",
+            "Read(./.env.*)",
+            "Read(./.aws/**)",
+            "Read(~/.aws/**)",
+            "Bash(git push --force:*)",
+            "Bash(git push -f:*)",
+            "Bash(rm -rf:*)"
+        ]
+    }
+}
